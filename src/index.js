@@ -21,13 +21,17 @@ io.on('connection', (socket) => {
     console.log('New web socket connection.')
 
     socket.emit('message', 'Welcome!')
-    
+
     socket.broadcast.emit('message', 'A new user has joined')
-    
+
     socket.on('message', (message) => {
         io.emit('receivedMessage', message)
     })
-    
+
+    socket.on('shareLocation', (coords) => {
+        io.emit('message', `https://www.google.com/maps?q=${coords.lat},${coords.lon}`)
+    })
+
     // Built-in event
     socket.on('disconnect', (reason) => {
         io.emit('message', 'A user has left')
