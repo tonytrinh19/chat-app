@@ -15,10 +15,25 @@ const publicDirectory = path.join(__dirname, '../public')
 
 app.use(express.static(publicDirectory))
 
+
 // On a new connection occur
-io.on('connection', () => {
+io.on('connection', (socket) => {
     console.log('New web socket connection.')
+
+    socket.emit('welcome', 'Welcome!')
+
+    // socket.on('increment', () => {
+    //     count++
+    //     // socket.emit('countUpdated', count) 
+    //     io.emit('countUpdated', count)
+    // })
+
+    socket.on('sendMessage', (message) => {
+        io.emit('receivedMessage', message)
+    })
 })
+
+
 
 server.listen(port, () => {
     console.log(`App is listening on port ${port}`)
