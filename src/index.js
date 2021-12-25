@@ -16,21 +16,24 @@ const publicDirectory = path.join(__dirname, '../public')
 app.use(express.static(publicDirectory))
 
 
-// On a new connection occur
+// On a new connection occur, built-in event
 io.on('connection', (socket) => {
     console.log('New web socket connection.')
 
-    socket.emit('welcome', 'Welcome!')
-
-    // socket.on('increment', () => {
-    //     count++
-    //     // socket.emit('countUpdated', count) 
-    //     io.emit('countUpdated', count)
-    // })
-
-    socket.on('sendMessage', (message) => {
+    socket.emit('message', 'Welcome!')
+    
+    socket.broadcast.emit('message', 'A new user has joined')
+    
+    socket.on('message', (message) => {
         io.emit('receivedMessage', message)
     })
+    
+    // Built-in event
+    socket.on('disconnect', (reason) => {
+        io.emit('message', 'A user has left')
+        console.log('Client disconnected')
+    })
+
 })
 
 

@@ -1,19 +1,16 @@
 const socket = io()
 const form = document.querySelector('#form-message')
-const message = document.querySelector('#message-input')
-socket.on('welcome', (welcome) => {
+socket.on('message', (welcome) => {
     console.log(welcome)
 })
 
-// document.querySelector('#incButn').addEventListener('click', () => {
-//     console.log('Clicked')
-//     socket.emit('increment')
-// })
-
 form.addEventListener('submit', (e) => {
     e.preventDefault()
+    // e is the form, selecting message element of form
+    const message = e.target.elements.message
 
-    socket.emit('sendMessage', message.value)
+    socket.send(message.value)
+
     message.value = ''
 })
 
