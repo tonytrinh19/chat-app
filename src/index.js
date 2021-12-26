@@ -2,6 +2,7 @@ const path = require('path')
 const http = require('http')
 const express = require('express')
 const socketio = require('socket.io')
+const Filter = require('bad-words')
 
 // Needs the original http because express set http behind the scene and we don't have access to http anymore
 // Do it this way to pass express to server and then create a socket server
@@ -25,12 +26,19 @@ io.on('connection', (socket) => {
     socket.broadcast.emit('message', 'A new user has joined')
 
     socket.on('message', (message, callback) => {
+        const filter = new Filter()
+        
+        if (filter.isProfane(message)) {
+            return callback('Profanity is not allowed')
+        }
+        
         io.emit('receivedMessage', message)
-        callback('Delivered!')
+        callback('', 'Message delivered!')
     })
 
-    socket.on('shareLocation', (coords) => {
+    socket.on('shareLocation', (coords, callback) => {
         io.emit('message', `https://www.google.com/maps?q=${coords.lat},${coords.lon}`)
+        callback()
     })
 
     // Built-in event

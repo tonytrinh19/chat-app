@@ -10,12 +10,24 @@
 
 <body>
     Chat App
+
+    <div id="messages"></div>
+
     <form id="form-message">
         <input name="message" type="text" placeholder="Message">
-        <input type="submit" value="Send">
+        <input id="send-msg-btn" type="submit" value="Send">
     </form>
     <button id="send-location">Send location</button>
 
+    <script id="message-template" type="text/html">
+        <div>
+            <p>This is a message</p>    
+        </div>
+    </script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mustache.js/4.2.0/mustache.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qs/6.10.2/qs.min.js"></script>
     <script src="/socket.io/socket.io.js"></script>
     <script src="/js/chat.js"></script>
 </body>
