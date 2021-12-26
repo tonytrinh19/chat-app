@@ -8,12 +8,27 @@ const $messages = document.querySelector('#messages')
 
 // Templates
 const messageTemplate = document.querySelector('#message-template').innerHTML
-
+const locationTemplate = document.querySelector('#location-template').innerHTML
 
 // Classic request-response using acknowledgement
 // server/client (emit) -> client/server (receive) --acknowledgement--> server/client
 socket.on('message', (welcome) => {
     console.log(welcome)
+})
+
+socket.on('receivedMessage', (message) => {
+    console.log(message)
+    const html = Mustache.render(messageTemplate, {
+        message
+    })
+    $messages.insertAdjacentHTML('beforeend', html)
+})
+
+socket.on('locationMessage', (url) => {
+    const html = Mustache.render(locationTemplate, {
+        location: url
+    })
+    $messages.insertAdjacentHTML('beforeend', html)
 })
 
 $form.addEventListener('submit', (e) => {
@@ -33,14 +48,6 @@ $form.addEventListener('submit', (e) => {
         }
         console.log(`${msg}`)
     })
-})
-
-socket.on('receivedMessage', (message) => {
-    console.log(message)
-    const html = Mustache.render(messageTemplate, {
-        message
-    })
-    $messages.insertAdjacentHTML('beforeend', html)
 })
 
 $sendLocationButton.addEventListener('click', (e) => {
