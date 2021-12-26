@@ -24,8 +24,9 @@ io.on('connection', (socket) => {
 
     socket.broadcast.emit('message', 'A new user has joined')
 
-    socket.on('message', (message) => {
+    socket.on('message', (message, callback) => {
         io.emit('receivedMessage', message)
+        callback('Delivered!')
     })
 
     socket.on('shareLocation', (coords) => {

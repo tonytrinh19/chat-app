@@ -2,6 +2,9 @@ const socket = io()
 const form = document.querySelector('#form-message')
 const sendLocationButton = document.querySelector('#send-location')
 
+// Classic request-response
+// server/client (emit) -> client/server (receive) --acknowledgement--> server/client
+
 socket.on('message', (welcome) => {
     console.log(welcome)
 })
@@ -10,8 +13,11 @@ form.addEventListener('submit', (e) => {
     e.preventDefault()
     // e is the form, selecting message element of form
     const message = e.target.elements.message
-
-    socket.send(message.value)
+    // acknowledgement is the last param.
+    // The function is called when the server called callback() function
+    socket.send(message.value, (msg) => {
+        console.log(`${msg}`)
+    })
 
     message.value = ''
 })
