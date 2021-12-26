@@ -7,7 +7,7 @@ const $sendLocationButton = document.querySelector('#send-location')
 const $messages = document.querySelector('#messages')
 
 // Templates
-const messageTemplate = document.querySelector('#message-template')
+const messageTemplate = document.querySelector('#message-template').innerHTML
 
 
 // Classic request-response using acknowledgement
@@ -37,6 +37,10 @@ $form.addEventListener('submit', (e) => {
 
 socket.on('receivedMessage', (message) => {
     console.log(message)
+    const html = Mustache.render(messageTemplate, {
+        message
+    })
+    $messages.insertAdjacentHTML('beforeend', html)
 })
 
 $sendLocationButton.addEventListener('click', (e) => {
