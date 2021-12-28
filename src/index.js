@@ -9,7 +9,9 @@ const Filter = require('bad-words')
 const app = express()
 const server = http.createServer(app)
 const io = socketio(server)
-
+const {
+    createMessage
+} = require('./utils/messages')
 
 const port = process.env.PORT
 const publicDirectory = path.join(__dirname, '../public')
@@ -21,17 +23,17 @@ app.use(express.static(publicDirectory))
 io.on('connection', (socket) => {
     console.log('New web socket connection.')
 
-    socket.emit('message', 'Welcome!')
+    socket.emit('message', createMessage('Welcome!'))
 
     socket.broadcast.emit('message', 'A new user has joined')
 
     socket.on('message', (message, callback) => {
         const filter = new Filter()
-        
+
         if (filter.isProfane(message)) {
             return callback('Profanity is not allowed')
         }
-        
+
         io.emit('receivedMessage', message)
         callback('', 'Message delivered!')
     })
