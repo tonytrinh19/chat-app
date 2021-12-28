@@ -10,7 +10,8 @@ const app = express()
 const server = http.createServer(app)
 const io = socketio(server)
 const {
-    createMessage
+    createMessage,
+    createLocationMessage
 } = require('./utils/messages')
 
 const port = process.env.PORT
@@ -39,7 +40,10 @@ io.on('connection', (socket) => {
     })
 
     socket.on('shareLocation', (coords, callback) => {
-        io.emit('locationMessage', `https://www.google.com/maps?q=${coords.lat},${coords.lon}`)
+        io.emit('locationMessage', createLocationMessage({
+            lat: coords.lat,
+            lon: coords.lon
+        }))
         callback()
     })
 

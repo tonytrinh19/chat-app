@@ -6,6 +6,14 @@ const createMessage = (text) => {
     }
 }
 
+const createLocationMessage = (coords) => {
+    return {
+        url: `https://www.google.com/maps?q=${coords.lat},${coords.lon}`,
+        createdAt: new Date().getTime()
+    }
+}
+
 module.exports = {
-    createMessage
+    createMessage,
+    createLocationMessage
 }
