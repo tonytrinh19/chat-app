@@ -14,6 +14,13 @@ const {
     createLocationMessage
 } = require('./utils/messages')
 
+const {
+    addUser,
+    removeUser,
+    getUser,
+    getUsersInRoom
+} = require('./utils/users')
+
 const port = process.env.PORT
 const publicDirectory = path.join(__dirname, '../public')
 
@@ -24,10 +31,6 @@ app.use(express.static(publicDirectory))
 io.on('connection', (socket) => {
     console.log('New web socket connection.')
 
-    socket.emit('message', createMessage('Welcome!'))
-
-    socket.broadcast.emit('message', createMessage('A new user has joined'))
-
     socket.on('message', (message, callback) => {
         const filter = new Filter()
 
@@ -37,16 +40,23 @@ io.on('connection', (socket) => {
         if (!message) {
             return callback('Cannot send an empty message')
         }
-        io.emit('receivedMessage', createMessage(message))
+        io.to('T').emit('receivedMessage', createMessage(message))
         callback('', 'Message delivered!')
     })
 
     socket.on('shareLocation', (coords, callback) => {
-        io.emit('locationMessage', createLocationMessage({
+        io.to('T').emit('locationMessage', createLocationMessage({
             lat: coords.lat,
             lon: coords.lon
         }))
         callback()
+    })
+
+    socket.on('joinRoom', ( { username, room }) => {
+        socket.join(room)
+
+        socket.emit('message', createMessage('Welcome!'))
+        socket.broadcast.to(room).emit('message', createMessage(`${username} has joined`))
     })
 
     // Built-in event

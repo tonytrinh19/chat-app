@@ -10,6 +10,9 @@ const $messages = document.querySelector('#messages')
 const messageTemplate = document.querySelector('#message-template').innerHTML
 const locationTemplate = document.querySelector('#location-template').innerHTML
 
+// Options
+const { username, room } = Qs.parse(location.search, { ignoreQueryPrefix: true })
+
 // Classic request-response using acknowledgement
 // server/client (emit) -> client/server (receive) --acknowledgement--> server/client
 socket.on('message', (welcome) => {
@@ -33,6 +36,8 @@ socket.on('locationMessage', (message) => {
     })
     $messages.insertAdjacentHTML('beforeend', html)
 })
+
+socket.emit('joinRoom', { username, room })
 
 $form.addEventListener('submit', (e) => {
     e.preventDefault()
