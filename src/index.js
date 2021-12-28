@@ -25,7 +25,7 @@ io.on('connection', (socket) => {
 
     socket.emit('message', createMessage('Welcome!'))
 
-    socket.broadcast.emit('message', 'A new user has joined')
+    socket.broadcast.emit('message', createMessage('A new user has joined'))
 
     socket.on('message', (message, callback) => {
         const filter = new Filter()
@@ -34,7 +34,7 @@ io.on('connection', (socket) => {
             return callback('Profanity is not allowed')
         }
 
-        io.emit('receivedMessage', message)
+        io.emit('receivedMessage', createMessage(message))
         callback('', 'Message delivered!')
     })
 
@@ -45,7 +45,7 @@ io.on('connection', (socket) => {
 
     // Built-in event
     socket.on('disconnect', (reason) => {
-        io.emit('message', 'A user has left')
+        io.emit('message', createMessage('A user has left'))
         console.log('Client disconnected')
     })
 

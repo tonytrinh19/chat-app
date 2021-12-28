@@ -13,13 +13,15 @@ const locationTemplate = document.querySelector('#location-template').innerHTML
 // Classic request-response using acknowledgement
 // server/client (emit) -> client/server (receive) --acknowledgement--> server/client
 socket.on('message', (welcome) => {
-    console.log(welcome)
+    console.log(welcome.text)
 })
 
 socket.on('receivedMessage', (message) => {
-    console.log(message)
+    console.log(message.text)
+    // Uses moment library to manipulate time output
     const html = Mustache.render(messageTemplate, {
-        message
+        message: message.text,
+        createdAt: moment(message.createdAt).format('hh:mm A')
     })
     $messages.insertAdjacentHTML('beforeend', html)
 })
