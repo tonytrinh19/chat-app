@@ -34,7 +34,9 @@ io.on('connection', (socket) => {
         if (filter.isProfane(message)) {
             return callback('Profanity is not allowed')
         }
-
+        if (!message) {
+            return callback('Cannot send an empty message')
+        }
         io.emit('receivedMessage', createMessage(message))
         callback('', 'Message delivered!')
     })
