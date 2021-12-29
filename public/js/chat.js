@@ -15,16 +15,18 @@ const { username, room } = Qs.parse(location.search, { ignoreQueryPrefix: true }
 
 // Classic request-response using acknowledgement
 // server/client (emit) -> client/server (receive) --acknowledgement--> server/client
-socket.on('message', (welcome) => {
-    console.log(welcome.text)
+socket.on('message', (message) => {
+    console.log(message.text)
 })
+
 
 socket.on('receivedMessage', (message) => {
     console.log(message.text)
     // Uses moment library to manipulate time output
     const html = Mustache.render(messageTemplate, {
         message: message.text,
-        createdAt: moment(message.createdAt).format('hh:mm A')
+        createdAt: moment(message.createdAt).format('hh:mm A'),
+        username: message.username
     })
     $messages.insertAdjacentHTML('beforeend', html)
 })
@@ -32,12 +34,18 @@ socket.on('receivedMessage', (message) => {
 socket.on('locationMessage', (message) => {
     const html = Mustache.render(locationTemplate, {
         location: message.url,
-        createdAt: moment(message.createdAt).format('hh:mm A')
+        createdAt: moment(message.createdAt).format('hh:mm A'),
+        username: message.username
     })
     $messages.insertAdjacentHTML('beforeend', html)
 })
 
-socket.emit('joinRoom', { username, room })
+socket.emit('joinRoom', { username, room }, (error) => {
+    if (error) {
+        alert(error)
+        location.href = '/'
+    }
+})
 
 $form.addEventListener('submit', (e) => {
     e.preventDefault()

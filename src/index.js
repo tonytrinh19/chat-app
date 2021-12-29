@@ -31,38 +31,50 @@ app.use(express.static(publicDirectory))
 io.on('connection', (socket) => {
     console.log('New web socket connection.')
 
-    socket.on('message', (message, callback) => {
-        const filter = new Filter()
+    
 
-        if (filter.isProfane(message)) {
-            return callback('Profanity is not allowed')
+    socket.on('joinRoom', ( { username, room }, callback) => {
+        const { error, user } = addUser({ id: socket.id, username, room })
+        
+        if (error) {
+            return callback(error)
         }
-        if (!message) {
-            return callback('Cannot send an empty message')
-        }
-        io.to('T').emit('receivedMessage', createMessage(message))
-        callback('', 'Message delivered!')
-    })
-
-    socket.on('shareLocation', (coords, callback) => {
-        io.to('T').emit('locationMessage', createLocationMessage({
-            lat: coords.lat,
-            lon: coords.lon
-        }))
-        callback()
-    })
-
-    socket.on('joinRoom', ( { username, room }) => {
-        socket.join(room)
-
+        
+        socket.join(user.room)
+        
         socket.emit('message', createMessage('Welcome!'))
-        socket.broadcast.to(room).emit('message', createMessage(`${username} has joined`))
+        socket.broadcast.to(user.room).emit('message', createMessage(`${user.username} has joined`))
+
+        socket.on('message', (message, callback) => {
+            const filter = new Filter()
+    
+            if (filter.isProfane(message)) {
+                return callback('Profanity is not allowed')
+            }
+            if (!message) {
+                return callback('Cannot send an empty message')
+            }
+            io.to(user.room).emit('receivedMessage', createMessage(message, user.username))
+            callback('', 'Message delivered!')
+        })
+
+        socket.on('shareLocation', (coords, callback) => {
+            io.to(user.room).emit('locationMessage', createLocationMessage({
+                lat: coords.lat,
+                lon: coords.lon
+            }, user.username))
+            callback()
+        })
+
+        callback()
     })
 
     // Built-in event
     socket.on('disconnect', (reason) => {
-        io.emit('message', createMessage('A user has left'))
-        console.log('Client disconnected')
+        const user = removeUser(socket.id)
+        if (user) {
+            io.to(user.room).emit('message', createMessage(`${user.username} has left`))
+        }
     })
 
 })

@@ -1,13 +1,15 @@
 // Generates objects to emit back to the client
-const createMessage = (text) => {
+const createMessage = (text, username) => {
     return {
+        username,
         text,
-        createdAt: new Date().getTime()
+        createdAt: new Date().getTime()        
     }
 }
 
-const createLocationMessage = (coords) => {
+const createLocationMessage = (coords, username) => {
     return {
+        username,
         url: `https://www.google.com/maps?q=${coords.lat},${coords.lon}`,
         createdAt: new Date().getTime()
     }
