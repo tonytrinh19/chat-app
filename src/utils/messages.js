@@ -1,5 +1,5 @@
 // Generates objects to emit back to the client
-const createMessage = (text, username) => {
+const createMessage = (text, username = 'Admin') => {
     return {
         username,
         text,

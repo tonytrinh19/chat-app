@@ -5,22 +5,28 @@ const $form = document.querySelector('#form-message')
 const $sendMessageButton = document.querySelector('#send-msg-btn')
 const $sendLocationButton = document.querySelector('#send-location')
 const $messages = document.querySelector('#messages')
+var $sidebar = document.querySelector('#sidebar')
 
 // Templates
 const messageTemplate = document.querySelector('#message-template').innerHTML
 const locationTemplate = document.querySelector('#location-template').innerHTML
+const sidebarTemplate = document.querySelector('#sidebar-template').innerHTML
 
 // Options
 const { username, room } = Qs.parse(location.search, { ignoreQueryPrefix: true })
 
 // Classic request-response using acknowledgement
 // server/client (emit) -> client/server (receive) --acknowledgement--> server/client
-socket.on('message', (message) => {
-    console.log(message.text)
+
+socket.on('roomData', ({ room, users }) => {
+    const html = Mustache.render(sidebarTemplate, {
+        room,
+        users
+    })
+    $sidebar.innerHTML = html
 })
 
-
-socket.on('receivedMessage', (message) => {
+socket.on('message', (message) => {
     console.log(message.text)
     // Uses moment library to manipulate time output
     const html = Mustache.render(messageTemplate, {

@@ -44,7 +44,11 @@ io.on('connection', (socket) => {
         
         socket.emit('message', createMessage('Welcome!'))
         socket.broadcast.to(user.room).emit('message', createMessage(`${user.username} has joined`))
-
+        io.to(user.room).emit('roomData', {
+            room: user.room,
+            users: getUsersInRoom(user.room)
+        })
+         
         socket.on('message', (message, callback) => {
             const filter = new Filter()
     
@@ -54,7 +58,7 @@ io.on('connection', (socket) => {
             if (!message) {
                 return callback('Cannot send an empty message')
             }
-            io.to(user.room).emit('receivedMessage', createMessage(message, user.username))
+            io.to(user.room).emit('message', createMessage(message, user.username))
             callback('', 'Message delivered!')
         })
 
@@ -74,6 +78,10 @@ io.on('connection', (socket) => {
         const user = removeUser(socket.id)
         if (user) {
             io.to(user.room).emit('message', createMessage(`${user.username} has left`))
+            io.to(user.room).emit('roomData', {
+                room: user.room,
+                users: getUsersInRoom(user.room)
+            })
         }
     })
 
