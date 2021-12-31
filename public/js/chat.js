@@ -1,19 +1,19 @@
 const socket = io()
 
 // Elements
-const $form = document.querySelector('#form-message')
-const $sendMessageButton = document.querySelector('#send-msg-btn')
+const $form               = document.querySelector('#form-message')
+const $sendMessageButton  = document.querySelector('#send-msg-btn')
 const $sendLocationButton = document.querySelector('#send-location')
-const $messages = document.querySelector('#messages')
-var $sidebar = document.querySelector('#sidebar')
+const $messages           = document.querySelector('#messages')
+var $sidebar              = document.querySelector('#sidebar')
 
 // Templates
-const messageTemplate = document.querySelector('#message-template').innerHTML
-const locationTemplate = document.querySelector('#location-template').innerHTML
-const sidebarTemplate = document.querySelector('#sidebar-template').innerHTML
+const messageTemplate     = document.querySelector('#message-template').innerHTML
+const locationTemplate    = document.querySelector('#location-template').innerHTML
+const sidebarTemplate     = document.querySelector('#sidebar-template').innerHTML
 
 // Options
-const { username, room } = Qs.parse(location.search, { ignoreQueryPrefix: true })
+const { username, room }  = Qs.parse(location.search, { ignoreQueryPrefix: true })
 
 // Scrolls the screen if the user is looking at the lastest message only
 const autoscroll = () => {
@@ -46,13 +46,28 @@ socket.on('roomData', ({ room, users }) => {
 })
 
 socket.on('message', (message) => {
-    console.log(message.text)
+    var style = 'row'
+    var bgColor = 'gray'
+    var textAlign = 'left'
+    // Sent from user
+    if (username.toLowerCase() === message.username) {
+        style = 'row-reverse'
+        bgColor = '#0070CC'
+        textAlign = 'right'
+    } // Sent from others
+
     // Uses moment library to manipulate time output
     const html = Mustache.render(messageTemplate, {
         message: message.text,
         createdAt: moment(message.createdAt).format('hh:mm A'),
-        username: message.username
+        username: message.username,
+        style: style,
+        bgColor,
+        textAlign
     })
+
+    
+
     $messages.insertAdjacentHTML('beforeend', html)
     autoscroll()
 })
