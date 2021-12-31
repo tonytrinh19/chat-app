@@ -56,6 +56,10 @@ button:disabled {
     background: #7c5cbf94;
 }
 
+a {
+    color: #F7F7FA;
+}
+
 /* Join Page Styles */
 
 .centered-form {

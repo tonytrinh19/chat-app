@@ -42,20 +42,27 @@
                     <div class="message__actions"></div>
                     <div class="message__spacer"></div>
                 </div>
-
             </div>
         </div>
     </script>
 
     <script id="location-template" type="text/html">
         <div>
-            <p>
+            <p class="message__info" style="text-align: {{textAlign}}">
                 <span class="message__name">{{username}}</span>
                 <span class="message__meta">{{createdAt}}</span>
             </p>
-            <p>
-                <a href="{{location}}" target="_blank">My current location</a>
-            </p>
+            <div class="message__outer">
+                <div class="message__inner" style="flex-direction: {{style}}">
+                    <div class="message__bubble" style="background-color: {{bgColor}}">
+                        <p>
+                            <a href="{{location}}" target="_blank">My current location</a>
+                        </p>
+                    </div>
+                    <div class="message__actions"></div>
+                    <div class="message__spacer"></div>
+                </div>
+            </div>
         </div>
     </script>
 
